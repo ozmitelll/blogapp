@@ -20,7 +20,7 @@
             <div class="lg:flex lg:gap-x-12">
                 <div class="relative">
                     <a href="/" class="mr-4 hover:text-orange-500">Home</a>
-                    <a href="/about" class="mr-4 hover:text-orange-500">Settings</a>
+                    <a href="{{route('user.settings')}}" class="mr-4 hover:text-orange-500">Settings</a>
                     <a href="{{ route('articles.index') }}" class="mr-4 hover:text-orange-500">Articles</a>
                 </div>
             </div>
