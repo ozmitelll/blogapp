@@ -32,6 +32,23 @@
         </nav>
     </div>
 </header>
+<div class="grid grid-cols-2 gap-4 mt-8 mx-auto">
+    @foreach($articles as $article)
+        <div class="bg-gray-800 text-white p-4 rounded-lg shadow-md mt-10 ml-10 mr-10">
+            <h2 class="text-xl font-bold mb-2">{{ $article->title }}</h2>
+            @if ($article->image)
+                <img src="{{ asset('storage/images/' . $article->image) }}" alt="Picture" class="w-full h-64 object-cover rounded-lg mb-2">
+            @endif
+            <p class="text-gray-300">{{ substr($article->content, 0, 100) }}...</p>
+            <p class="text-gray-400">Date: {{ $article->created_at }}</p>
+            <a href="{{ route('articles.show', $article->id) }}" class="text-orange-500 hover:text-orange-600">Read More</a>
+        </div>
+    @endforeach
+</div>
+
+
+
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
