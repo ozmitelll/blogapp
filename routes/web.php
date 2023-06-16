@@ -2,8 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserContoller;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,9 +20,8 @@ Route::get('/logout',[AuthController::class,'logout'])->name('logout');
 
 //User Routes
 
-Route::get('/settings', [UserContoller::class, 'showSettings'])->name('user.settings')->middleware('auth');
-
-
+Route::get('/settings', [UserController::class, 'showSettings'])->name('user.settings')->middleware('auth');
+Route::put('/settings/edit', [UserController::class, 'editUser'])->name('user.update')->middleware('auth');
 //Articles Routes
 
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index')->middleware('auth');

@@ -36,14 +36,24 @@
     <div class="bg-gray-900 py-4 px-6 mt-5">
         <h2 class="text-2xl font-bold text-white">Settings</h2>
     </div>
+    @if(session('success'))
+        <div class="bg-orange-500 text-white text-center px-4 py-2 mb-4 max-w-7xl rounded">
+            {{ session('success') }}
+        </div>
+    @endif
     <div class="px-6 py-4">
-        <form>
+        <form action="/settings/edit" method="POST">
+            @csrf
+            @method('PUT')
             <div class="flex items-center mb-4 mt-5">
                 <div class="w-1/4">
                     <label for="name" class="text-white">Name:</label>
                 </div>
                 <div class="w-3/4">
-                    <input type="text" id="name" name="name" class="w-full bg-white-100 rounded-md py-2 px-4 focus:outline-none focus:border-orange-500" required>
+                    <input type="text"  id="name" name="name" value="{{ old('name', $user->name) }}" class="w-full bg-white-100 rounded-md py-2 px-4 focus:outline-none focus:border-orange-500" required>
+                    @error('name')
+                    <p class="text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
@@ -52,7 +62,10 @@
                     <label for="email" class="text-white">Email:</label>
                 </div>
                 <div class="w-3/4">
-                    <input type="email" id="email" name="email" class="w-full bg-white rounded-md py-2 px-4 focus:outline-none focus:border-orange-500" required>
+                    <input type="email"  id="email" name="email" value="{{ old('email', $user->email) }}" class="w-full bg-white rounded-md py-2 px-4 focus:outline-none focus:border-orange-500" required>
+                    @error('email')
+                    <p class="text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
@@ -62,15 +75,6 @@
                 </div>
                 <div class="w-3/4">
                     <input type="password" id="password" name="password" class="w-full bg-white rounded-md py-2 px-4 focus:outline-none focus:border-orange-500" required>
-                </div>
-            </div>
-
-            <div class="flex items-center mb-4 mt-10">
-                <div class="w-1/4">
-                    <label for="confirm_password" class="text-white">Confirm Password:</label>
-                </div>
-                <div class="w-3/4">
-                    <input type="password" id="confirm_password" name="confirm_password" class="w-full bg-white rounded-md py-2 px-4 focus:outline-none focus:border-orange-500" required>
                 </div>
             </div>
 
