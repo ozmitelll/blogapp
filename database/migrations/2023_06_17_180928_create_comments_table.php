@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('author');
             $table->text('content');
             $table->unsignedBigInteger('article_id');
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->timestamps();
 
             $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
         });
     }
 

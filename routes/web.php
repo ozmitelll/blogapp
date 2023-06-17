@@ -34,6 +34,7 @@ Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->nam
 //Comments Routes
 Route::post('/articles{article}/comments', [ArticleController::class, 'storeComment'])->name('articles.comment.store')->middleware('auth');
 Route::delete('/articles/{article}/comments/{comment}',[ArticleController::class,'destroyComment'])->name('articles.comment.destroy')->middleware('auth');
+Route::post('/articles/{article}/comments/{comment}/reply', [ArticleController::class, 'storeReply'])->name('articles.comment.reply')->middleware('auth');
 
 
 

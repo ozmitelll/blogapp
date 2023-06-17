@@ -60,7 +60,7 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        $comments = $article->comments;
+        $comments = $article->comments()->whereNull('parent_id')->with('replies')->get();
         return view('articles.show', compact('article','comments'));
     }
 
@@ -118,6 +118,7 @@ class ArticleController extends Controller
         $comment = new Comment();
         $comment->author = Auth::user()->name;
         $comment->content = $request->input('content');
+        $comment->article_id = $article;
 
         $article->comments()->save($comment);
         return redirect()->route('articles.show',$article);
@@ -127,5 +128,25 @@ class ArticleController extends Controller
         $comment->delete();
         return redirect()->route('articles.show',$article);
     }
+
+    public function storeReply(Request $request, Article $article, Comment $comment)
+    {
+        $request->validate([
+            'content' => 'required'
+        ]);
+
+        $reply = new Comment();
+        $reply->author = Auth::user()->name;
+        $reply->content = $request->input('content');
+        $reply->article_id = $article->id;
+        $reply->parent_id = $comment->id;
+
+        $comment->replies()->save($reply);
+
+
+        return redirect()->route('articles.show', $article);
+    }
+
+
 }
 
