@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,6 +47,7 @@ class ArticleController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
             $imagePath = $image->store('public/images');
             $article->image = basename($imagePath);
         }
@@ -58,7 +60,8 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        return view('articles.show', compact('article'));
+        $comments = $article->comments;
+        return view('articles.show', compact('article','comments'));
     }
 
     /**
@@ -103,6 +106,26 @@ class ArticleController extends Controller
         $article->delete();
 
         return redirect()->route('articles.index')->with('success', 'Article successful deleted.');
+    }
 
+    //Comments
+
+    public function storeComment(Request $request, Article $article){
+        $request->validate([
+            'content'=>'required'
+        ]);
+
+        $comment = new Comment();
+        $comment->author = Auth::user()->name;
+        $comment->content = $request->input('content');
+
+        $article->comments()->save($comment);
+        return redirect()->route('articles.show',$article);
+    }
+
+    public function destroyComment(Article $article, Comment $comment){
+        $comment->delete();
+        return redirect()->route('articles.show',$article);
     }
 }
+

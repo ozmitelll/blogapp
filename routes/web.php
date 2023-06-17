@@ -31,5 +31,11 @@ Route::get('/articles{article}/edit',[ArticleController::class, 'edit'])->name('
 Route::put('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update')->middleware('auth');
 Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy')->middleware('auth');
 
+//Comments Routes
+Route::post('/articles{article}/comments', [ArticleController::class, 'storeComment'])->name('articles.comment.store')->middleware('auth');
+Route::delete('/articles/{article}/comments/{comment}',[ArticleController::class,'destroyComment'])->name('articles.comment.destroy')->middleware('auth');
+
+
+
 
 

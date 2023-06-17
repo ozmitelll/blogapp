@@ -8,7 +8,7 @@
     <title>Blog | {{$article->title}}</title>
     @vite('resources/css/app.css')
 </head>
-<body>
+<body class="bg-gray-900">
 <header class="bg-gray-300 text-dark font-montserrat">
     <div class="container ml-24">
         <nav class="flex items-center justify-between px-4 py-2">
@@ -66,6 +66,38 @@
         </div>
     </div>
 </div>
+<div class="w-2/3 mx-auto mt-8 bg-gray-800 rounded-lg shadow-md p-6">
+
+    <h2 class="text-2xl font-bold text-white  mb-4">Add a Comment</h2>
+    <form action="{{ route('articles.comment.store', $article) }}" method="POST">
+        @csrf
+        <div class="mb-4">
+            <label for="content" class="text-white ">Content:</label>
+            <textarea name="content" id="content" required class="w-full h-24 bg-gray-700 text-white p-4 rounded-lg mt-2" placeholder="Enter you comment for this article..."></textarea>
+        </div>
+        <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-700 text-black rounded-lg">Add Comment</button>
+    </form>
+    <h2 class="text-2xl font-bold text-white mt-4">Comments</h2>
+    <ul class="divide-y divide-gray-600">
+        @foreach ($comments as $comment)
+            <li class="py-4">
+                <div class="text-white mb-2">
+                    <strong>{{ $comment->author }}</strong>
+                    <p>{{ $comment->content }}</p>
+                </div>
+                @if(Auth::check() && (Auth::user()->id == $article->user_id || Auth::user()->isAdmin()))
+
+                <form action="{{ route('articles.comment.destroy', ['article' => $article, 'comment' => $comment]) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="text-red-500 hover:text-red-700">Delete Comment</button>
+                </form>
+                @endif
+            </li>
+        @endforeach
+    </ul>
+</div>
+
 
 
 </body>
