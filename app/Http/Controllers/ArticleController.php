@@ -6,6 +6,9 @@ use App\Models\Article;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use ReCaptcha\ReCaptcha;
 
 class ArticleController extends Controller
 {
@@ -111,9 +114,15 @@ class ArticleController extends Controller
     //Comments
 
     public function storeComment(Request $request, Article $article){
-        $request->validate([
-            'content'=>'required'
+
+        $validator = Validator::make($request->all(),[
+            'content'=>'required',
+            'g-recaptcha-response'=> 'required|captcha',
         ]);
+
+        if($validator->fails()){
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $comment = new Comment();
         $comment->author = Auth::user()->name;

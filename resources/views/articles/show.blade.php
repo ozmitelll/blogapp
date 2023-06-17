@@ -32,7 +32,7 @@
         </nav>
     </div>
 </header>
-<div class="flex justify-center items-center h-screen bg-gray-900 font-montserrat">
+<div class="flex justify-center items-center h-screen bg-gray-900 font-montserrat mt-5">
     <div class="w-2/3 bg-gray-800 shadow-md rounded-lg flex">
         <div class="w-1/2 p-8">
             @if ($article->image)
@@ -75,7 +75,13 @@
             <label for="content" class="text-white">Content:</label>
             <textarea name="content" id="content" required class="w-full h-24 bg-gray-700 text-white p-4 rounded-lg mt-2" placeholder="Enter your comment for this article..."></textarea>
         </div>
-        <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-700 text-black rounded-lg">Add Comment</button>
+        {!! NoCaptcha::renderJs() !!}
+        {!! NoCaptcha::display() !!}
+        {{--                    <div class="g-recaptcha" data-sitekey="6LezjagmAAAAAEf2eWWKCv0mhVfz1rORG-Kmwxu9"></div>--}}
+        @error('g-recaptcha-response')
+        <p class="text-red-500 text-sm">{{ $message }}</p>
+        @enderror
+        <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-700 text-black rounded-lg mt-2">Add Comment</button>
     </form>
 
     <h2 class="text-2xl font-bold text-white mt-4">Comments</h2>
@@ -85,13 +91,14 @@
                 <div class="flex justify-between text-white mb-2">
                     <div>
                         <strong>{{ $comment->author }}</strong>
-                        <span class="text-gray-400 ml-2">| {{ $comment->created_at->format('d.m.Y H:i') }}</span>
+                        <span class="text-gray-400 ml-2">| {{ $comment->created_at->format('d.m.Y H:i') }} <a id="replyButton" class="underline hover:no-underline text-orange-500">Reply</a></span>
+
                     </div>
                     @if (Auth::check() && (Auth::user()->id == $article->user_id || Auth::user()->isAdmin()))
                         <form action="{{ route('articles.comment.destroy', ['article' => $article, 'comment' => $comment]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700">
+                            <button type="submit" class="text-red-500 hover:text-red-700 mr-5">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6">
                                     <path fill-rule="evenodd" d="M10 2a8 8 0 100 16A8 8 0 0010 2zm3.707 9.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10l-2.293-2.293a1 1 0 011.414-1.414L10 8.586l2.293-2.293a1 1 0 011.414 1.414L11.414 10l2.293 2.293z" clip-rule="evenodd" />
                                 </svg>
@@ -111,7 +118,6 @@
                         @endforeach
                     </ul>
                 @endif
-                <p id="replyButton" class="underline hover:text-white w-12 ml-5 text-orange-500" >Reply</p>
 
                 <form id="replyForm" class="hidden mt-4" action="{{ route('articles.comment.reply', ['article' => $article, 'comment' => $comment]) }}" method="POST">
                     @csrf
@@ -119,12 +125,9 @@
                         <label for="content" class="text-white">Your reply:</label>
                         <textarea name="content" id="content" required class="w-full h-24 bg-gray-700 text-white p-4 rounded-lg mt-2" placeholder="Enter your reply..."></textarea>
                     </div>
+
                     <button type="submit" class="px-4 ml-5 py-2 bg-orange-500 hover:bg-orange-700 text-black rounded-lg">Add Comment</button>
                 </form>
-
-
-
-
             </li>
         @endforeach
     </ul>
