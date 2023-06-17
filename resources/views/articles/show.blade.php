@@ -84,36 +84,38 @@
         <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-700 text-black rounded-lg mt-2">Add Comment</button>
     </form>
 
-    <h2 class="text-2xl font-bold text-white mt-4">Comments</h2>
+    <h2 class="text-2xl font-bold text-white mt-4 mb-2">Comments</h2>
     <ul class="divide-y divide-gray-600 bg-gray-600 rounded-lg">
         @foreach ($comments as $comment)
-            <li class="ml-2 py-4">
-                <div class="flex justify-between text-white mb-2">
+            <li class="ml-2 py-4 ">
+                <div class="bg-gray-700 rounded-lg mr-2">
+                   <div class="flex justify-between text-white mb-2 ml-2">
                     <div>
                         <strong>{{ $comment->author }}</strong>
                         <span class="text-gray-400 ml-2">| {{ $comment->created_at->format('d.m.Y H:i') }} <a id="replyButton" class="underline hover:no-underline text-orange-500">Reply</a></span>
 
                     </div>
-                    @if (Auth::check() && (Auth::user()->id == $article->user_id || Auth::user()->isAdmin()))
+                    @if (Auth::check() && (Auth::user()->id == $article->user_id || Auth::user()->isAdmin() || $comment->author == Auth::user()->name))
                         <form action="{{ route('articles.comment.destroy', ['article' => $article, 'comment' => $comment]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 mr-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-6 w-6">
+                            <button type="submit" class="text-red-500 hover:text-red-700 mr-2 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
                                     <path fill-rule="evenodd" d="M10 2a8 8 0 100 16A8 8 0 0010 2zm3.707 9.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10l-2.293-2.293a1 1 0 011.414-1.414L10 8.586l2.293-2.293a1 1 0 011.414 1.414L11.414 10l2.293 2.293z" clip-rule="evenodd" />
                                 </svg>
                             </button>
                         </form>
                     @endif
                 </div>
-                <p class="text-white font-extralight mb-2">{{ $comment->content }}</p>
+                   <p class="text-white font-extralight ml-2 mb-2 ">{{ $comment->content }}</p>
+                </div>
                 @if ($comment->replies->count() > 0)
                     <ul>
                         @foreach ($comment->replies as $reply)
-                            <li class="mt-3">
+                            <li class="mt-3 bg-gray-500 rounded-lg mr-2">
                                 <strong class="ml-5 text-white">{{ $reply->author }}</strong>
                                 <span class="text-gray-400 ml-2">| {{ $comment->created_at->format('d.m.Y H:i') }}</span>
-                                <p class="ml-5 text-white font-extralight">{{ $reply->content }}</p>
+                                <p class="ml-5 text-white font-extralight ">{{ $reply->content }}</p>
                             </li>
                         @endforeach
                     </ul>
