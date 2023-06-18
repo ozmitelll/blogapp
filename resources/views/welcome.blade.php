@@ -20,18 +20,37 @@
             <div class="lg:flex lg:gap-x-12">
                 <div class="relative">
                     <a href="/" class="mr-4 hover:text-orange-500">Home</a>
-                    <a href="{{route('user.settings')}}" class="mr-4 hover:text-orange-500">Settings</a>
                     <a href="{{ route('articles.index') }}" class="mr-4 hover:text-orange-500">Articles</a>
                 </div>
             </div>
             @if(Auth::user()==null)
             <a href="{{route('loginPage')}}" class="text-sm font-semibold leading-6 text-black hover:text-orange-500">Log in <span aria-hidden="true">&rarr;</span></a>
             @else
-                <a href="{{route('logout')}}" class="text-sm font-semibold leading-6 text-black hover:text-orange-500">Logout <span aria-hidden="true">&rarr;</span></a>
+
+                <div class="relative">
+
+                    <button id="avatarButton" class="flex items-center focus:outline-none">
+                        <p class="mr-5">{{Auth::user()->name}}</p>
+                         @if(Auth::user()->avatar != null)
+                        <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                        @else
+                            <img src="{{asset('storage/avatars/default-avatar.png')}}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                        @endif
+                    </button>
+
+
+                    <div id="dropdownMenu" class="absolute right-0 mt-2 py-2 w-48 bg-gray-500 rounded-lg shadow-xl z-10 hidden">
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
+                        <a href="{{route('user.settings')}}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a>
+                        <a href="{{route('logout')}}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a>
+                    </div>
+                </div>
             @endif
         </nav>
     </div>
 </header>
+
+
 <div class="grid grid-cols-2 gap-4 mt-8 mx-auto">
     @foreach($articles as $article)
         <div class="bg-gray-800 text-white p-4 rounded-lg shadow-md mt-10 ml-10 mr-10">
@@ -45,12 +64,13 @@
         </div>
     @endforeach
 </div>
-
-
-
-
-
-
+<script>
+    // JavaScript код
+    document.getElementById('avatarButton').addEventListener('click', function() {
+        var dropdownMenu = document.getElementById('dropdownMenu');
+        dropdownMenu.classList.toggle('hidden');
+    });
+</script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 </body>

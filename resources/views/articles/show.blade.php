@@ -20,14 +20,31 @@
             <div class="lg:flex lg:gap-x-12">
                 <div class="relative">
                     <a href="/" class="mr-4 hover:text-orange-500">Home</a>
-                    <a href="{{route('user.settings')}}" class="mr-4 hover:text-orange-500">Settings</a>
                     <a href="{{ route('articles.index') }}" class="mr-4 hover:text-orange-500">Articles</a>
                 </div>
             </div>
             @if(Auth::user()==null)
                 <a href="{{route('loginPage')}}" class="text-sm font-semibold leading-6 text-black hover:text-orange-500">Log in <span aria-hidden="true">&rarr;</span></a>
             @else
-                <a href="{{route('logout')}}" class="text-sm font-semibold leading-6 text-black hover:text-orange-500">Logout <span aria-hidden="true">&rarr;</span></a>
+
+                <div class="relative">
+
+                    <button id="avatarButton" class="flex items-center focus:outline-none">
+                        <p class="mr-5">{{Auth::user()->name}}</p>
+                        @if(Auth::user()->avatar != null)
+                            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                        @else
+                            <img src="{{asset('storage/avatars/default-avatar.png')}}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                        @endif
+                    </button>
+
+
+                    <div id="dropdownMenu" class="absolute right-0 mt-2 py-2 w-48 bg-gray-500 rounded-lg shadow-xl z-10 hidden">
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
+                        <a href="{{route('user.settings')}}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a>
+                        <a href="{{route('logout')}}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a>
+                    </div>
+                </div>
             @endif
         </nav>
     </div>
@@ -89,30 +106,40 @@
         @foreach ($comments as $comment)
             <li class="ml-2 py-4 ">
                 <div class="bg-gray-700 rounded-lg mr-2">
-                   <div class="flex justify-between text-white mb-2 ml-2">
+                   <div class="flex justify-content-start text-white mb-2 ml-2">
+                       <div class="mr-2 mt-2">
+                       @if(Auth::user()->avatar != null)
+                           <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                       @else
+                           <img src="{{asset('storage/avatars/default-avatar.png')}}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                       @endif
+                       </div>
                     <div>
                         <strong>{{ $comment->author }}</strong>
                         <span class="text-gray-400 ml-2">| {{ $comment->created_at->format('d.m.Y H:i') }} <a id="replyButton" class="underline hover:no-underline text-orange-500">Reply</a></span>
+                        <p class="text-white font-extralight  mb-2">{{ $comment->content }}</p>
 
                     </div>
-                    @if (Auth::check() && (Auth::user()->id == $article->user_id || Auth::user()->isAdmin() || $comment->author == Auth::user()->name))
+                    @if (Auth::check() && (Auth::user()->id == $article->user_id || Auth::user()->hasRole('admin') || $comment->author == Auth::user()->name))
                         <form action="{{ route('articles.comment.destroy', ['article' => $article, 'comment' => $comment]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 mr-2 mt-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
-                                    <path fill-rule="evenodd" d="M10 2a8 8 0 100 16A8 8 0 0010 2zm3.707 9.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10l-2.293-2.293a1 1 0 011.414-1.414L10 8.586l2.293-2.293a1 1 0 011.414 1.414L11.414 10l2.293 2.293z" clip-rule="evenodd" />
-                                </svg>
+                            <button type="submit" class="text-red-500 hover:text-red-700 mr-2 ml-auto">
+                                <p class="underline text-red-500 hover:no-underline ml-2">Delete</p>
                             </button>
                         </form>
                     @endif
-                </div>
-                   <p class="text-white font-extralight ml-2 mb-2 ">{{ $comment->content }}</p>
+                 </div>
                 </div>
                 @if ($comment->replies->count() > 0)
                     <ul>
                         @foreach ($comment->replies as $reply)
                             <li class="mt-3 bg-gray-500 rounded-lg mr-2">
+{{--                                @if($reply->author->avatar != null)--}}
+{{--                                    <img src="{{ asset('storage/avatars/' . $reply->author->avatar) }}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">--}}
+{{--                                @else--}}
+{{--                                    <img src="{{asset('storage/avatars/default-avatar.png')}}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">--}}
+{{--                                @endif--}}
                                 <strong class="ml-5 text-white">{{ $reply->author }}</strong>
                                 <span class="text-gray-400 ml-2">| {{ $comment->created_at->format('d.m.Y H:i') }}</span>
                                 <p class="ml-5 text-white font-extralight ">{{ $reply->content }}</p>

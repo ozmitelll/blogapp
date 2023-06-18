@@ -20,14 +20,31 @@
             <div class="lg:flex lg:gap-x-12">
                 <div class="relative">
                     <a href="/" class="mr-4 hover:text-orange-500">Home</a>
-                    <a href="{{route('user.settings')}}" class="mr-4 hover:text-orange-500">Settings</a>
                     <a href="{{ route('articles.index') }}" class="mr-4 hover:text-orange-500">Articles</a>
                 </div>
             </div>
             @if(Auth::user()==null)
                 <a href="{{route('loginPage')}}" class="text-sm font-semibold leading-6 text-black hover:text-orange-500">Log in <span aria-hidden="true">&rarr;</span></a>
             @else
-                <a href="{{route('logout')}}" class="text-sm font-semibold leading-6 text-black hover:text-orange-500">Logout <span aria-hidden="true">&rarr;</span></a>
+
+                <div class="relative">
+
+                    <button id="avatarButton" class="flex items-center focus:outline-none">
+                        <p class="mr-5">{{Auth::user()->name}}</p>
+                        @if(Auth::user()->avatar != null)
+                            <img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                        @else
+                            <img src="{{asset('storage/avatars/default-avatar.png')}}" alt="" class="w-10 h-10  object-cover rounded-full cursor-pointer" type="button" id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start">
+                        @endif
+                    </button>
+
+
+                    <div id="dropdownMenu" class="absolute right-0 mt-2 py-2 w-48 bg-gray-500 rounded-lg shadow-xl z-10 hidden">
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
+                        <a href="{{route('user.settings')}}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a>
+                        <a href="{{route('logout')}}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a>
+                    </div>
+                </div>
             @endif
         </nav>
     </div>
@@ -42,9 +59,23 @@
         </div>
     @endif
     <div class="px-6 py-4">
-        <form action="/settings/edit" method="POST">
+        <form action="{{route('user.update')}}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
+            <div class="flex items-center mb-10 mt-5">
+                <div class="w-1/4">
+                    <label for="image" class="text-white">Avatar:</label>
+                </div>
+                <div class="w-3/4">
+                    <input type="file" name="image" id="image" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm cursor-pointer">
+                    @error('image')
+                    <p class="text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+
             <div class="flex items-center mb-4 mt-5">
                 <div class="w-1/4">
                     <label for="name" class="text-white">Name:</label>
@@ -74,7 +105,7 @@
                     <label for="password" class="text-white">Password:</label>
                 </div>
                 <div class="w-3/4">
-                    <input type="password" id="password" name="password" class="w-full bg-white rounded-md py-2 px-4 focus:outline-none focus:border-orange-500" required>
+                    <input type="password" id="password" name="password" class="w-full bg-white rounded-md py-2 px-4 focus:outline-none focus:border-orange-500">
                 </div>
             </div>
 

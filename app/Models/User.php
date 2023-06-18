@@ -47,9 +47,8 @@ class User extends Authenticatable
         return $this->hasMany(Article::class);
     }
 
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
+    public function hasRole($role){
+        return $this->role === $role;
     }
 
 

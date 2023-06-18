@@ -12,7 +12,7 @@
 <div class="flex justify-center items-center h-screen bg-gray-900 font-montserrat">
     <div class="w-1/3 bg-gray-800 shadow-md rounded px-8 py-6">
         <h2 class="text-2xl font-bold text-white mb-6">Registration</h2>
-        <form action="{{ route('register') }}" method="POST">
+        <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-4">
@@ -29,6 +29,11 @@
                 @error('email')
                 <span class="text-red-500">{{ $message }}</span>
                 @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="image" class="text-white font-medium">Avatar</label>
+                <input type="file" name="image" id="image" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm cursor-pointer">
             </div>
 
             <div class="mb-4">

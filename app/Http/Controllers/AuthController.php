@@ -22,6 +22,7 @@ class AuthController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:50',
             'email'=> 'required|string|email|max:100|unique:users',
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'password'=>'required|string|min:8|confirmed',
         ],[
             'password.confirmed' => 'The password confirmation does not match.',
@@ -36,6 +37,13 @@ class AuthController extends Controller
             'email' =>$validatedData['email'],
             'password'=>Hash::make($validatedData['password'])
         ]);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->store('public/avatars');
+            $user->avatar = basename($imagePath);
+            $user->save();
+        }
 
         session()->flash('success','Registration successful! Please log in.');
 

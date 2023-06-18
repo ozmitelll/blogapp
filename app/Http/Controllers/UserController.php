@@ -24,7 +24,8 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'name' => 'required',
             'email'=> 'required|string|email|max:100|unique:users,email,' . $user->id,
-            'password'=>'required|string|min:8',
+            'password'=>'string|min:8|nullable',
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
 
@@ -33,7 +34,15 @@ class UserController extends Controller
         if($validatedData['password']){
             $user->password = Hash::make($validatedData['password']);
         }
-        $user->save();
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->store('public/avatars');
+            $user->avatar = basename($imagePath);
+            $user->save();
+        }
+        else{
+            $user->save();
+        }
 
 
         return redirect()->route('user.settings')->with('success', 'Profile success updated.');

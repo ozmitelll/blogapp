@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -8,6 +9,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+//Admin Routes
+
+Route::group(['middleware' => 'admin'], function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index')->middleware('auth');
+
+});
 
 //User Routes
 
@@ -35,6 +42,8 @@ Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->nam
 Route::post('/articles{article}/comments', [ArticleController::class, 'storeComment'])->name('articles.comment.store')->middleware('auth');
 Route::delete('/articles/{article}/comments/{comment}',[ArticleController::class,'destroyComment'])->name('articles.comment.destroy')->middleware('auth');
 Route::post('/articles/{article}/comments/{comment}/reply', [ArticleController::class, 'storeReply'])->name('articles.comment.reply')->middleware('auth');
+
+
 
 
 
